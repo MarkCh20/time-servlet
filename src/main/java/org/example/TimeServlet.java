@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 @WebServlet(value = "/time")
 public class TimeServlet extends HttpServlet {
     private static final Logger logger = Logger.getLogger(TimeServlet.class.getName());
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss 'UTC'x");
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
@@ -33,7 +34,7 @@ public class TimeServlet extends HttpServlet {
             }
 
             ZonedDateTime now = ZonedDateTime.now(zoneId);
-            String formattedTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss 'UTC'x"));
+            String formattedTime = now.format(FORMATTER);
 
             response.setContentType("text/html; charset=UTF-8");
 

@@ -4,14 +4,15 @@ import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
 
-@WebFilter("/*")
+@WebFilter("/time")
 public class TimezoneValidateFilter implements Filter {
 
-    private static final Pattern UTC_OFFSET_PATTERN = Pattern.compile("UTC[+-]\\d{1,2}");
+    private static final Pattern UTC_OFFSET_PATTERN = Pattern.compile("UTC[+-](0?\\d|1[0-4])");
+    private static final Set<String> TIMEZONES = Set.of(TimeZone.getAvailableIDs());
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -22,8 +23,7 @@ public class TimezoneValidateFilter implements Filter {
         if (timezone != null && !timezone.isEmpty()) {
             timezone = timezone.replace(" ", "+");
 
-            boolean isValid = Arrays.asList(TimeZone.getAvailableIDs()).contains(timezone)
-                    || UTC_OFFSET_PATTERN.matcher(timezone).matches();
+            boolean isValid = TIMEZONES.contains(timezone) || UTC_OFFSET_PATTERN.matcher(timezone).matches();
 
             if (!isValid) {
                 HttpServletResponse httpResp = (HttpServletResponse) response;
